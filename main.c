@@ -167,6 +167,9 @@ int domainTransfer(char* fileName) {
     return (EXIT_SUCCESS);
 }
 
+int changeNS(char* fileName, char* ns1, char* ns2, char* ns3) {
+    
+}
 
 /*
  * 
