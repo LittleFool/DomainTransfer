@@ -169,7 +169,7 @@ int domainTransfer(char* fileName) {
 
 int changeNS(char* fileName, char* ns1, char* ns2, char* ns3) {
     FILE *file;
-    int temp, i=0;
+    int temp, i = 0;
     char domain[256];
     Stack *s = createStack();
     
@@ -189,14 +189,16 @@ int changeNS(char* fileName, char* ns1, char* ns2, char* ns3) {
     
     while ((temp = fgetc(file)) != EOF) {
         if(temp == '\n') {
-            i = 0;
             domain[i] = 0;
+            i = 0;
             
             char *domainc = (char*) malloc(sizeof(domain));
             memcpy(domainc, domain, sizeof(domain));
             push(s, domainc);
             continue;
         }
+        
+        domain[i] = temp;
         
         i++;
     }
@@ -209,14 +211,19 @@ int changeNS(char* fileName, char* ns1, char* ns2, char* ns3) {
     }
     
     while(!isEmpty(s)) {
-        char *auth = pop(s);
         char *dom = pop(s);
         
-        fprintf(file, "command = TransferDomain\n");
+        fprintf(file, "command = ModifyDomain\n");
         fprintf(file, "domain = %s\n", dom);
-        fprintf(file, "auth = %s\n\n", auth);
+        fprintf(file, "nameserver0 = %s\n", ns1);
+        fprintf(file, "nameserver1 = %s\n", ns2);
         
-        free(auth);
+        if (ns3 != NULL) {
+            fprintf(file, "nameserver2 = %s\n\n", ns3);
+        } else {
+            fprintf(file, "\n");
+        }
+        
         free(dom);
     }
     fclose(file);
@@ -230,11 +237,15 @@ int changeNS(char* fileName, char* ns1, char* ns2, char* ns3) {
  * 
  */
 int main(int argc, char** argv) {
-    if (argc != 3) {
+    if (argc < 3) {
         goto usage;
     } else {
         if (strcmp(argv[1], "transfer") == 0) {
-            domainTransfer(argv[2]);
+            return domainTransfer(argv[2]);
+        }
+        
+        if (strcmp(argv[1], "nameserver") == 0) {
+            return changeNS(argv[2], argv[3], argv[4], argv[5]);
         }
         
         else {
