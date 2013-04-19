@@ -244,13 +244,13 @@ int main(int argc, char** argv) {
             return domainTransfer(argv[2]);
         }
         
-        if (strcmp(argv[1], "nameserver") == 0) {
+        if (argc <= 6 && argc >= 5 && strcmp(argv[1], "nameserver") == 0) {
             return changeNS(argv[2], argv[3], argv[4], argv[5]);
         }
         
         else {
             usage:
-            printf("Usage %s transfer [fileName]\n", argv[0]);
+            printf("Usage: %s {transfer|nameserver} fileName [2-3 Nameservers]\n", argv[0]);
         }
     }
     
