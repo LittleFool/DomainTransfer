@@ -172,6 +172,19 @@ int domainTransfer(char* fileName) {
  * 
  */
 int main(int argc, char** argv) {
-    domainTransfer(argv[1]);
+    if (argc != 3) {
+        goto usage;
+    } else {
+        if (strcmp(argv[1], "transfer") == 0) {
+            domainTransfer(argv[2]);
+        }
+        
+        else {
+            usage:
+            printf("Usage %s transfer [fileName]\n", argv[0]);
+        }
+    }
+    
+    
 }
 
