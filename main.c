@@ -90,10 +90,7 @@ void destroyStack(Stack *top) {
 /* End Stack */
 
 
-/*
- * 
- */
-int main(int argc, char** argv) {
+int domainTransfer(char* fileName) {
     FILE *file;
     int temp, i=0, spalte=1;
     char domain[256], authcode[256];
@@ -105,10 +102,10 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     
-    file = fopen("domains.txt", "r");
+    file = fopen(fileName, "r");
     
     if (file == NULL) {
-        printf("Can't open filen %s\n",argv[1]);
+        printf("Can't open file: %s\n",fileName);
         destroyStack(s);
         return EXIT_FAILURE;
     }
@@ -166,7 +163,15 @@ int main(int argc, char** argv) {
     fclose(file);
     destroyStack(s);
     
-    
+    printf("transferAPI.txt has been written.\n");
     return (EXIT_SUCCESS);
+}
+
+
+/*
+ * 
+ */
+int main(int argc, char** argv) {
+    domainTransfer(argv[1]);
 }
 
