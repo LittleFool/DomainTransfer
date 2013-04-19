@@ -168,7 +168,62 @@ int domainTransfer(char* fileName) {
 }
 
 int changeNS(char* fileName, char* ns1, char* ns2, char* ns3) {
+    FILE *file;
+    int temp, i=0;
+    char domain[256];
+    Stack *s = createStack();
     
+    // createStack() returns NULL if malloc failed to allocate memory for us
+    if (s == NULL) {
+        printf("There is not enought memory for the stack! We have to exit here!\n");
+        return EXIT_FAILURE;
+    }
+    
+    file = fopen(fileName, "r");
+    
+    if (file == NULL) {
+        printf("Can't open file: %s\n",fileName);
+        destroyStack(s);
+        return EXIT_FAILURE;
+    }
+    
+    while ((temp = fgetc(file)) != EOF) {
+        if(temp == '\n') {
+            i = 0;
+            domain[i] = 0;
+            
+            char *domainc = (char*) malloc(sizeof(domain));
+            memcpy(domainc, domain, sizeof(domain));
+            push(s, domainc);
+            continue;
+        }
+        
+        i++;
+    }
+    fclose(file);
+    
+    file = fopen("nsChangeAPI.txt", "w");
+    if (file == NULL) {
+        printf("Can't write the file here! Check folder permissions or chose another path.\n");
+        return EXIT_FAILURE;
+    }
+    
+    while(!isEmpty(s)) {
+        char *auth = pop(s);
+        char *dom = pop(s);
+        
+        fprintf(file, "command = TransferDomain\n");
+        fprintf(file, "domain = %s\n", dom);
+        fprintf(file, "auth = %s\n\n", auth);
+        
+        free(auth);
+        free(dom);
+    }
+    fclose(file);
+    destroyStack(s);
+    
+    printf("nsChangeAPI.txt has been written.\n");
+    return (EXIT_SUCCESS);
 }
 
 /*
